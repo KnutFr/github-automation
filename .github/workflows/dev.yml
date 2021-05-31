@@ -25,7 +25,8 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Docker build stuff
-        run: docker compose build -f ops/docker-compose.yml
-        
+      - name: Run build and test
+        run: docker build -t knutfr/automation-github:api -f ops/Dockerfile .
+
+      - name: Build sidecar img for migration purpose
+        run: docker build -t knutfr/automation-github:sidecar -f ops/Dockerfile.sidecar .
