@@ -1,0 +1,10 @@
+FROM alpine:3.13 AS base
+RUN apk add --no-cache nodejs-current yarn npm tini
+WORKDIR /opt/api
+ENTRYPOINT ["/sbin/tini", "--"]
+COPY prisma .
+
+
+FROM base AS sidecar
+RUN yarn global add prisma
+ENTRYPOINT ["prisma"]

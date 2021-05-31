@@ -1,0 +1,37 @@
+version: '3'
+services:
+  database:
+    image: "postgres"
+    container_name: automation_db
+    env_file:
+      - database.env
+    volumes:
+      - dbdata:/var/lib/postgresql/data/
+  api:
+    build:
+      context: ../
+      dockerfile: ops/Dockerfile
+    depends_on:
+      - database
+    env_file:
+      - api.env
+    container_name: automation_api
+    ports:
+    - 5000:5000
+
+  db_sidecar:
+    build:
+      context: ../
+      dockerfile: ops/Dockerfile.sidecar
+    depends_on:
+      - api
+    env_file:
+      - api.env
+    container_name: automation_dbsidecar
+    command: db push --skip-generate
+
+volumes:
+  dbdata:
+networks:
+  default:
+    name: automation-network
