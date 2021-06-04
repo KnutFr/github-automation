@@ -11,6 +11,8 @@ RUN yarn
 # Build JS Struff
 FROM dependencies AS build
 COPY . .
+RUN yarn global add prisma
+RUN prisma generate
 RUN yarn build
 
 # Test things
@@ -19,9 +21,6 @@ RUN  yarn run lint &&  yarn run test
 
 # Ready to run stage
 FROM base AS release
-COPY prisma .
-RUN yarn global add prisma
-RUN prisma generate
 RUN yarn --only=production
 COPY --from=build /opt/api/dist ./dist
 EXPOSE 5000
